@@ -72,3 +72,30 @@ poly.fit_transform(X)
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 ```
+---
+## Create Your Model
+### Supervised Learning Estimators
+###### Supervised learning estimators use labeled training data where input features are matched with known output targets to learn patterns and predict outcomes on new, unseen data.
+#### Linear Regression
+```
+from sklearn.linear_model import LinearRegression
+lr = LinearRegression(normalize=True)
+```
+
+#### Support Vector Machines (SVM)
+```
+from sklearn.svm import SVC
+svc = SVC(kernel='linear')
+```
+
+#### Naive Bayes
+```
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+```
+
+#### KNN
+```
+from sklearn import neighbors
+knn = neighbors.KNeighborsClassifier(n_neighbors=5)
+```
