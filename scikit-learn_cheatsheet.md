@@ -169,3 +169,42 @@ y_pred = k_means.predict(X_test)
 |Supervised	  | predict(X_test)     	| Predicts an actual target value, like a specific category (e.g., "Spam") or a continuous number (e.g., "$350,000"). |
 |Supervised  	| predict_proba(X_test) |	Output is a list of probabilities (e.g., "There is an 85% chance this email is spam, and a 15% chance it is not"). |
 |Unsupervised	| predict(X_test)	| Assigns the new data to a specific cluster ID (e.g., Cluster 0, Cluster 1, Cluster 2) based on which trained center point it lives closest to. |
+
+---
+## Evaluate Your Model's Performance
+### Classification Metrics
+#### Accuracy Score
+* **What it is**: It measures the percentage of correct predictions out of all total predictions made.
+* **How it works**: It divides the number of correct guesses by the total number of test cases.
+```
+knn.score(X_test, y_test)
+from sklearn.metrics import accuracy_score
+accuracy_score(y_test, y_pred)
+```
+> While easy to understand, it can be highly misleading if your dataset is imbalanced (e.g., if 99% of your emails are normal and 1% are spam, a broken model that guesses "not spam" every time will still get a 99% accuracy score).
+
+#### Classification Report
+* **What it is**: A comprehensive text summary that breaks down performance across multiple core metrics for each individual class.
+* **How it works**: Instead of giving you one overall score, it splits the performance into a table containing three vital metrics for every category
+| Metric    |	What It Answers	                                                                                                                 |   
+| --------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Precision |	Out of all the items the model claimed belonged to a class, how many were actually right? (Minimizes false alarms).	             |
+| Recall    |	Out of all the actual real-world cases of a class, how many did the model successfully catch? (Minimizes missed targets).	       |
+| F1-Score  |	The harmonic balance between Precision and Recall. It gives you a single, fair score when you need a compromise between the two. |
+
+```
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred))
+```
+
+#### Confusion Matrix
+* **What it is**: A visual \(N \times N\) grid layout that maps out exactly where your model is getting confused by comparing Actual Labels against Predicted Labels.
+* **How it works**: For a simple binary setup (like checking for a disease), it sorts every prediction into a four-quadrant table:
+|	            | Predicted: NO     | Predicted: YES    |
+| ----------- | ----------------- | ----------------- |
+| Actual: NO  | True Negative (TN) _(Correctly called healthy)_              | False Positive (FP) (False Alarm: Healthy but called sick) |
+| Actual: YES	| False Negative (FN) (Missed Target: Sick but called healthy) | True Positive (TP) (Correctly called sick)                 |
+```
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, y_pred))
+```
