@@ -201,12 +201,41 @@ print(classification_report(y_test, y_pred))
 * **What it is**: A visual \(N \times N\) grid layout that maps out exactly where your model is getting confused by comparing Actual Labels against Predicted Labels.
 * **How it works**: For a simple binary setup (like checking for a disease), it sorts every prediction into a four-quadrant table:
 
-|	            | Predicted: NO                                                  | Predicted: YES                                               |
-| ----------- | -------------------------------------------------------------- | ------------------------------------------------------------ |
-| Actual: NO  | True Negative (TN) _(Correctly called healthy)_                | False Positive (FP) _(False Alarm: Healthy but called sick)_ |
-| Actual: YES	| False Negative (FN) _(Missed Target: Sick but called healthy)_ | True Positive (TP) _(Correctly called sick)  _               |
+|	               | Predicted: NO                                                  | Predicted: YES                                               |
+| -------------- | -------------------------------------------------------------- | ------------------------------------------------------------ |
+| Actual: NO     | True Negative (TN) _(Correctly called healthy)_                | False Positive (FP) _(False Alarm: Healthy but called sick)_ |
+| Actual: YES	   | False Negative (FN) _(Missed Target: Sick but called healthy)_ | True Positive (TP) _(Correctly called sick)_                 |
 
 ```
 from sklearn.metrics import confusion_matrix
 print(confusion_matrix(y_test, y_pred))
+```
+
+### Regression Metrics
+#### Mean Absolute Error (MAE)
+* **What it is**: The average size of the model's mistakes, measured in the exact same units as your target variable.
+* **How it works**: It calculates the distance between the actual value and the predicted value for every single data point, turns any negative differences into positive numbers (absolute value), and averages them out.
+```
+from sklearn.metrics import mean_absolute_erros
+y_true = [3, 0.5, 2]
+mean_absolute_error(y_true, y_pred)
+```
+
+#### Mean Squared Error (MSE)
+* **What it is**: A metric that measures the average of the squared mistakes, which heavily penalizes large errors.
+* **How it works**: Like MAE, it calculates the distance between the actual and predicted values, but then it squares each distance before averaging them.
+> Because squaring numbers makes big numbers much bigger (e.g., an error of 2 becomes 4, but an error of 10 becomes 100), a few massive blunders will ruin an MSE score completely.
+```
+from sklearn.metrics import mean_squared_error
+mean_squared_error(y_test, y_pred)
+```
+
+#### R2 Score (R-Squared / Coefficient of Determination)
+* **What it is**: A baseline comparison score that tells you how well your model explains the patterns in the data compared to a dumb, lazy model that just guesses the overall average every time.
+* **How it works**: It usually outputs a score between 0 and 1 (or 0% to 100%):
+  ** **0**: Your model is completely useless; it performs no better than just guessing the average value for every prediction.
+  ** **1**: Your model is perfect; it perfectly explains every single fluctuation in the dataset without any mistakes.
+```
+from sklearn.metrics import r2_score
+r2_score(y_true, y_pred)
 ```
