@@ -90,3 +90,150 @@ imputer = SimpleImputer(strategy='mean')
 df_imputed = pd.DataFrame(impute.fit_transform(df), columns=df.columns)
 ```
 > If you need a more complex imputation method, you may consider using a KNN or regression imputation to find a good value. Ultimately, the method you choose will depend on your data, your needs, and your available resources.
+
+### Outlier detection and treatment
+Outliers are a bit tricky to deal with. **Some seeming outliers are actually important data**, such as how the stock market responds to crises like COVID-19 and the Global Recession. However, others may be typos or irrelevant, rare circumstances, and should be removed.
+
+Knowing the difference is often a matter of understanding your data in context, which your previous data exploration should have helped you with, and having a clear idea of your goal for your analysis.
+
+Many outliers are visible when the data is plotted, but you can also use statistical methods to identify outliers.
+
+A common method is to **calculate a Z-score** for each data point and eliminate the values with an extreme Z-score.
+```
+import numpy as np
+import pandas as pd
+
+# Generate some sample data
+np.random.seed(0)
+data = np.random.randint(low=0, high=11, size=1000)
+
+# Add some outliers
+data[0] = 100
+data[1] = -100
+
+# Calculate Z-scores
+z_scores = (data - np.mean(data)) / np.std(data)
+
+# Identify outliers based on Z-score threshold (e.g., 3)
+threshold = 3
+outlier = np.where(np.abs(z_scores) > threshold)[0]
+print("Outlier identified using Z-score method: ")
+print(data[outliers])
+```
+
+Another method is to **calculate the interquartile range (IQR)** of the distribution and classify any values that are Q1-(1.5 x IQR) or Q3 + (1.5 x IQR) as potential outliers.
+```
+import numpy as np
+import pandas as pd
+
+# Generate some sample data
+np.random.seed(0)
+data = np.random.randint(low=0, high=11, size=1000)
+
+# Add some outliers
+data[0] = 100
+data[1] = -100
+
+# Calculate quartiles and IQR
+q1 = np.percentile(data, 25)
+q3 = np.percentile(data, 75)
+iqr = q3 - q1
+
+# Identify outliers based on IQR
+lower_bound = q1 - (1.5 * iqr)
+upper_bound = q3 + (1.5 * iqr)
+outliers = np.where((data < lower_bound) | (data > upper_bound))[0]
+print("Outliers identified using IQR method:")
+print(data[outliers])
+```
+Once you have identified any outliers and determined they are problematic, several methods exist to deal with them. **If you have determined that the outlier is due to an error, it may be possible to simply correct the error to resolve the outlier.**
+
+In other cases, it may be possible to **remove the outlier from the dataset or replace it with a less extreme value** that retains the overall shape of the distribution.
+
+**Capping** is a method where you set a cap, or threshold, on your data’s distribution and replace any values outside those bounds with a specified value.
+```
+import pandas as pd
+import numpy as np
+
+# Create a sample DataFrame with outliers
+data = {
+          'A': [100, 90, 85, 88, 110, 115, 120, 130, 140],
+          'B': [1, 2, 3, 4, 5, 6, 7, 8, 9]
+       }
+df = pd.DataFrame(data) # Define the lower and upper thresholds for capping (Here I used the 5th and 95th percentiles)
+lower_threshold = df.quantile(0.05)
+upper_threshold = df.quantile(0.95)
+
+# Cap outliers
+capped_df = df.clip(lower=lower_threshold, upper=upper_threshold, axis=1)
+print("Original DataFrame:")
+print(df)
+print("\nCapped DataFrame:")
+print(capped_df)
+```
+In some cases, you can transform your data in a way that makes outliers less impactful, such as a **square root transformation** or a **logarithmic transformation**.
+
+Be cautious when transforming your data, as you may introduce more problems in the long run if you’re not careful. There are a few things to consider before deciding to transform your data.
+
+1. **Understand the underlying data distribution**: Before applying any transformation, it's important to understand the distribution of your data and how certain transformations will impact it.
+2. **Choose an appropriate transformation**: Select a transformation method that is suitable for your data distribution.
+3. **Handle zeros and negative values**: Some transformations may not be suitable for data containing zeros or negative values. Adding a small constant can help avoid issues when taking logarithms, for example.
+4. **Validate transformed data**: After applying transformations, validate the transformed data to ensure that the resulting distribution meets the assumptions of your analysis.
+5. **Consider the interpretability**: Transformed data may not be as easily interpretable as the original data. Ensure that stakeholders understand the implications of the transformation on the interpretation of results.
+
+### Dealing with duplicates
+We’ve already seen how duplicates can wreak havoc on our analyses. Fortunately, Python makes identifying and handling duplicates simple.
+
+Using the duplicated() method in Python’s pandas library, you can easily identify duplicate rows in a DataFrame to examine them.
+```
+import pandas as pd # Assuming 'df' is your DataFrame
+duplicate_rows = df[df.duplicated()]
+```
+This will return a DataFrame containing rows that are duplicates. Once you have this DataFrame of duplicate rows, I encourage you to look at the duplicates if there aren’t too many of them.
+
+Most duplicates may be exact copies and may simply be dropped using the drop_duplicates() method in Pandas:
+```
+# Removing duplicates
+cleaned_df = df.drop_duplicates()
+```
+
+In some cases, it might be more appropriate to merge duplicate records, aggregating information. For example, if duplicates represent multiple entries for the same entity, we can merge them using aggregation functions:
+```
+# Merging duplicates by aggregating values
+merged_df = df.groupby(list_of_columns).agg({'column_to_merge': 'sum'})
+```
+
+This will combine duplicate rows into one, aggregating values based on specified functions like sum, mean, etc.
+```
+import pandas as pd # Sample DataFrame
+data = {
+        'customer_id' : [102, 102, 101, 103, 102]
+        'product_id' : ['A', 'B', 'A', 'C', 'B']
+        'quantity_sold : [5, 3, 2, 1, 4]
+      }
+df = pd.DataFrame(data)
+df
+
+# Merging duplicates by aggregating values
+merged_df = df.groupby(['cutomer_id', 'product_id']).agg({'quantity_sold': 'sum'}).reset_index()
+merged_df
+```
+
+### Addressing inconsistencies
+Different types of inconsistencies will require different solutions. Inconsistencies resulting from incorrect data inputs or from typos may need to be corrected by a knowledgeable source. Alternatively, the incorrect data may be replaced using imputation, as if it were a missing value, or removed from the dataset entirely, depending on the circumstances.
+
+Inconsistencies in the formatting of the data can be corrected using some standardizing methods. To remove leading and trailing spaces from a string, you can use the **_.strip()_** method. The **_.upper()_** and **_.lower()_** methods will standardize the case in strings. And converting dates to datetimes using **_pd.to_datetime_** will standardize date formatting.
+
+You can also ensure every value in the column of a DataFrame is the same data type using the **_.astype()_** method.
+
+Other formatting inconsistency corrections you may need to conduct include:
+
+* Unit conversion
+* Email, phone, and address standardization
+* Removing punctuation from strings
+* Using value mapping to address common abbreviations
+
+```
+value_mapping = {'M': 'Male', 'F': 'Female'}
+standardized_value = value_mapping.get('M', 'Unknown')
+```
