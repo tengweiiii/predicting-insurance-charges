@@ -89,4 +89,4 @@ import pandas as pd # Assuming df is your DataFrame
 imputer = SimpleImputer(strategy='mean')
 df_imputed = pd.DataFrame(impute.fit_transform(df), columns=df.columns)
 ```
-
+> If you need a more complex imputation method, you may consider using a KNN or regression imputation to find a good value. Ultimately, the method you choose will depend on your data, your needs, and your available resources.
