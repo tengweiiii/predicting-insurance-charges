@@ -237,3 +237,86 @@ Other formatting inconsistency corrections you may need to conduct include:
 value_mapping = {'M': 'Male', 'F': 'Female'}
 standardized_value = value_mapping.get('M', 'Unknown')
 ```
+
+## Data Transformation and Feature Engineering
+Data transformation and feature engineering are preprocessing techniques for transforming raw data into a format that is more suitable for machine learning algorithms and statistical analysis.
+
+### Normalization and standardization
+Normalization and standardization are two techniques used to **bring features to a similar scale**, which is important for many machine learning algorithms.
+
+**Normalization** scales the data to a fixed range, usually between 0 and 1. This ensures that all features are on the same scale and prevents certain features from dominating others due to their larger magnitude.
+```
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(data)
+```
+
+**Standardization** transforms the data to have a mean of 0 and a standard deviation of 1. This technique is useful when the data has different scales and varying ranges, and it ensures that each feature has a comparable impact on the model.
+```
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+standardized_data = scaler.fit_transform(data)
+```
+The specific characteristics of your data and the requirements of your intended model will dictate how you will scale your data.
+Learn more: https://www.datacamp.com/tutorial/normalization-vs-standardization
+
+### Encoding categorical variables
+Encoding categorical variables is an essential preprocessing step in machine learning when **dealing with features that are not numerical**. Categorical variables represent qualitative data, such as types, classes, or labels. To use these variables in machine learning algorithms, they need to be converted into a numerical format.
+
+One common technique for encoding categorical variables is **one-hot encoding**, which transforms each category into a binary vector. This method is particularly useful when dealing with nominal categorical variables, where **there is no inherent order or hierarchy among the categories**.
+```
+import pandas as pd
+
+encoded_data = pd.get_dummies(data, columns=['categorical_column'])
+```
+```
+import pandas as pd
+
+# Create a sample DataFrame with a categorical column
+data = {
+    'ID': [1, 2, 3, 4, 5],
+    'Color': ['Red', 'Blue', 'Green', 'Red', 'Blue']
+}
+df. pd.DataFrame(data)
+
+# Perform one-hot encoding
+encoded_data = pd.get_dummies(df, columns=['Color'])
+
+print("Original DataFrame")
+print(df)
+
+print("\nEncoded DataFrame:")
+print(encoded_data)
+```
+
+Another approach is **label encoding**, which assigns a unique integer to each category. Each category is mapped to a numerical value, effectively converting categorical labels into ordinal numbers. This method is suitable for ordinal categorical variables, where **there is a natural order or ranking among the categories**.
+```
+from sklearn.preprocessing import LabelEncoder
+encoder = LabelEncoder()
+encoded_data['categorical_column'] = encoder.fit_transform(data['categorical_column'])
+```
+
+```
+from sklearn.preprocessing import LabelEncoder
+import pandas as pd
+
+# Create a sample DataFrame with categorical column
+data = {
+          'ID' : [1, 2, 3, 4, 5]
+          'Color' : [ 'Red', 'Blue', 'Green', 'Red', 'Green' ]
+}
+df = pd.DataFrame(data)
+
+# Perform label encoding
+encoder  = LabelEncoder()
+df ['Color_LabelEncoded'] = encoder.fit_transform(df['Color'])
+
+print("Original DataFrame:")
+print(df[['ID', 'Color']])
+
+print("\nDataFrame with Label Encoded Column:")
+print(df[['ID', 'Color_LabelEncoded']])
+```
+> It's important to choose the appropriate encoding method based on the nature of the categorical variable and the requirements of the machine learning algorithm. One-hot encoding is generally preferred for nominal variables, while label encoding is suitable for ordinal variables.
