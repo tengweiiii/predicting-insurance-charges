@@ -284,18 +284,70 @@ print(cross_val_score(lr, X, y, cv=2))
 * **Step 4: Average the Scores** – Once the loop finishes, you average the performance scores from all K rounds to get a final, highly reliable metric.
 
 ### Visually Visualizing a 5-Fold Cross-Validation
-| Round	  | Fold 1    |	Fold 2     |	Fold 3   |	Fold 4   |	Fold 5	  | Result   |
-| ------- | --------- | ---------- | ---------| ---------| ---------| -------- |
-| Round 1	| 🎯 Test	  | 📖 Train   | 📖 Train	| 📖 Train	| 📖 Train	| Score A |
-| Round 2	| 📖 Train	 | 🎯 Test    | 📖 Train	| 📖 Train	| 📖 Train	| Score B |
-| Round 3	| 📖 Train	 | 📖 Train   |	🎯 Test	  | 📖 Train	| 📖 Train	| Score C |
-| Round 4	| 📖 Train	 | 📖 Train	 | 📖 Train	 | 🎯 Test	 | 📖 Train	| Score D |
-| Round 5	| 📖 Train	 | 📖 Train	 | 📖 Train	 | 📖 Train	| 🎯 Test	 | Score E |
-| Final			| Average of All Scores			                                   | True Performance |
-
+<table>
+  <tr>
+    <th>Round</th>
+    <th>Fold 1</th>
+    <th>Fold 2</th>
+    <th>Fold 3</th>
+    <th>Fold 4</th>
+    <th>Fold 5</th>
+    <th>Result</th>
+  </tr>
+  <tr>
+    <td>Round 1</td>
+    <td>🎯 Test</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>Score A</td>
+  </tr>
+  <tr>
+    <td>Round 2</td>
+    <td>📖 Train</td>
+    <td>🎯 Test</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>Score B</td>
+  </tr>
+  <tr>
+    <td>Round 3</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>🎯 Test</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>Score C</td>
+  </tr>
+  <tr>
+    <td>Round 4</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>🎯 Test</td>
+    <td>📖 Train</td>
+    <td>Score D</td>
+  </tr>
+  <tr>
+    <td>Round 5</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>📖 Train</td>
+    <td>🎯 Test</td>
+    <td>Score E</td>
+  </tr>
+  <tr>
+    <td>Final</td>
+    <td colspan="5" align="center">Average of All Scores</td>
+    <td>True Performance</td>
+  </tr>
+</table>
 
 ### Why is Cross-Validation Crucial?
 * **Prevents Overfitting**: It stops you from building a model that memorizes the training data perfectly but fails completely in the real world.
 * **Uses All Data**: Every single data point gets a turn to be part of the test set exactly once, and part of the training set K-1 times.
 * **Provides a Realistic Benchmark**: The average score gives you an honest, stable look at how robust your model actually is.
-
+---
