@@ -239,3 +239,63 @@ mean_squared_error(y_test, y_pred)
 from sklearn.metrics import r2_score
 r2_score(y_true, y_pred)
 ```
+
+### Clustering Metrics
+#### Adjusted Rand Index (ARI)
+* **What it is**: A similarity metric that measures how accurately the model's clusters match the true groupings, adjusted to ensure a purely random guessing game scores zero.
+* **How it works**: It looks at every possible pair of data points and checks two things:
+  1. Did the model put similar points into the same cluster?
+  2. Did the model separate different points into different clusters?
+> The "Adjusted" part is critical. It filters out accidental right answers, returning a score from -1 to 1 (where 1 is a perfect match, and 0 means the model did no better than drawing names out of a hat).
+```
+from sklearn.metrics import adjusted_rand_score
+adjusted_rand_score(y_true, y_pred)
+```
+
+#### Homogeneity
+* **What it is**: A metric that checks if each individual cluster contains only data points that belong to a single, unique class.
+* **How it works**: It looks inside each cluster pile one by one. A cluster is 100% homogeneous (score of 1.0) if it is perfectly pure.
+> For instance, containing only "Apple" data points. If a cluster contains a messy mix of apples, bananas, and oranges, the homogeneity score drops significantly.
+```
+from sklearn.metrics import homogeneity_score
+homogeneity_score(y_true, y_pred)
+```
+
+#### V-measure
+* **What it is**: The perfectly balanced harmonic mean between **Homogeneity** and **Completeness** (which measures if all members of a true class are successfully grouped into the exact same cluster).
+* **How it works**: Just like the F1-score in classification, the V-measure provides a single, fair compromise score between two competing goals. A model could cheat and get a perfect Homogeneity score by putting every single data point into its own tiny individual cluster, but its Completeness score would crash. V-measure penalizes this behavior, **requiring both metrics to be strong to get a high overall score**.
+```
+from sklearn.metrics import v_measure_score
+metrics.v_measure_score(y_true, y_pred)
+```
+
+## Cross-validation
+#### Cross-validation is a dataset-splitting technique used to evaluate how well a machine learning model will perform on new, unseen data, ensuring that your evaluation metrics aren't just the result of a lucky guess or a biased split.
+```
+print(cross_val_score(knn, X_train, y_train, cv=4))
+print(cross_val_score(lr, X, y, cv=2))
+```
+
+### The Gold Standard: K-Fold Cross-Validation
+##### The most common way to perform cross-validation is called K-Fold. Here is how it breaks down step-by-step:
+* **Step 1: Choose "K"** – You decide on a number of groups (K) to split your data into. The industry standard is typically K=5 or K=10.
+* **Step 2: Split the Data** – The algorithm chops your dataset into K equal-sized, random chunks (folds).
+* **Step 3: The Loop** – The model runs an evaluation loop K times. Each time, it picks a different chunk to act as the test set (the exam), and uses all the remaining chunks combined as the training set (the study guide).
+* **Step 4: Average the Scores** – Once the loop finishes, you average the performance scores from all K rounds to get a final, highly reliable metric.
+
+### Visually Visualizing a 5-Fold Cross-Validation
+| Round	  | Fold 1    |	Fold 2     |	Fold 3   |	Fold 4   |	Fold 5	  | Result   |
+| ------- | --------- | ---------- | ---------| ---------| ---------| -------- |
+| Round 1	| 🎯 Test	  | 📖 Train   | 📖 Train	| 📖 Train	| 📖 Train	| Score A |
+| Round 2	| 📖 Train	 | 🎯 Test    | 📖 Train	| 📖 Train	| 📖 Train	| Score B |
+| Round 3	| 📖 Train	 | 📖 Train   |	🎯 Test	  | 📖 Train	| 📖 Train	| Score C |
+| Round 4	| 📖 Train	 | 📖 Train	 | 📖 Train	 | 🎯 Test	 | 📖 Train	| Score D |
+| Round 5	| 📖 Train	 | 📖 Train	 | 📖 Train	 | 📖 Train	| 🎯 Test	 | Score E |
+| Final			| Average of All Scores			                                   | True Performance |
+
+
+### Why is Cross-Validation Crucial?
+* **Prevents Overfitting**: It stops you from building a model that memorizes the training data perfectly but fails completely in the real world.
+* **Uses All Data**: Every single data point gets a turn to be part of the test set exactly once, and part of the training set K-1 times.
+* **Provides a Realistic Benchmark**: The average score gives you an honest, stable look at how robust your model actually is.
+
