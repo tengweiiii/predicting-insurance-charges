@@ -1,7 +1,4 @@
 # From Data to Dollars - Predicting Insurance Charges
-![](image.jpg)
-
-
 Dive into the heart of data science with a project that combines healthcare insights and predictive analytics. As a Data Scientist at a top Health Insurance company, you have the opportunity to predict customer healthcare costs using the power of machine learning. Your insights will help tailor services and guide customers in planning their healthcare expenses more effectively.
 
 ## Dataset Summary
@@ -26,3 +23,16 @@ A bit of data cleaning is key to ensure the dataset is ready for modeling. Once 
 ## Let's Get Started!
 
 This project is your playground for applying data science in a meaningful way, offering insights that have real-world applications. Ready to explore the data and uncover insights that could revolutionize healthcare planning? Let's begin this exciting journey!
+```
+# Re-run this cell
+# Import required libraries
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score
+
+# Loading the insurance dataset
+insurance_data_path = 'insurance.csv'
+insurance = pd.read_csv(insurance_data_path)
+insurance.head()
+```
