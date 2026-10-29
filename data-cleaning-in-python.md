@@ -39,7 +39,7 @@ Let’s look at some typical steps for conducting a data exploration on a table-
 6. If possible, **plot each variable and as many pairs of variables as you can** and really look at the plots. Look for any skews, outliers, trends, or correlations that may be worth looking into further.
 7. If your dataset is part of a relational database, **look closely at the relationships** and make sure you understand how the different tables relate to each other.
 8. If applicable, use the **profiling feature of the pandas library** to generate a profile report. This will provide you with valuable information about your dataset.
-   https://www.geeksforgeeks.org/python/pandas-profiling-in-python/ 
+https://www.geeksforgeeks.org/python/pandas-profiling-in-python/ 
 
 ### Why exploration and preprocessing matters
 This all may seem superfluous to your intended analysis, but there are a few important reasons you should always take these steps. Firstly, doing this will give you a **great understanding of the limits of your dataset**, which is essential if you are to trust the results of your final analyses.
