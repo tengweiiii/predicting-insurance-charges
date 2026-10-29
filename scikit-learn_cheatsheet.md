@@ -77,24 +77,37 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 ### Supervised Learning Estimators
 ###### Supervised learning estimators use labeled training data where input features are matched with known output targets to learn patterns and predict outcomes on new, unseen data.
 #### Linear Regression
+* **What it does:** Predicts a continuous, numerical value by drawing a straight line through data points
+* **How it works:** It looks at the relationship between the input and target output and fits a line that minimizes the overall distance between the actual data points and the line itself
+* **Real-world example**: Estimating a person'd weight based on their height or forecasting next month's sales revenue
 ```
 from sklearn.linear_model import LinearRegression
 lr = LinearRegression(normalize=True)
 ```
 
 #### Support Vector Machines (SVM)
+* **What it does**: Finds the best wall or boundary (called a hyperplane) to separate different classes of data
+* **How it works**: It tries to find a boundary that leaves the widest possible "street" or margin between the group. The data points closest to this boundary are called support vectors
+* **Real-world example**: Classifying emails into spam vs. not spam or distinguishing benign tumors from malignant tumors in medical scans
 ```
 from sklearn.svm import SVC
 svc = SVC(kernel='linear')
 ```
 
 #### Naive Bayes
+* **What it does**: A fast classification method built on probability and Bayes' theorem
+* **How it works**: It calculates the chance that a data point belongs to a certain category based on past examples
+* **Real-world example**: Filtering junk mail or categorizing news articales into sports, politics or tech
+> It is called 'Naive' because it makes a bold assumption. It treats every feature as completely independent of the others. For example, pretending the words "free", "winner", and "click" in an email have no relation to one another
 ```
 from sklearn.naive_bayes import GaussianNB
 gnb = GaussianNB()
 ```
 
-#### KNN
+#### K-Nearest Neighbors (KNN)
+* **What it does**: Classifies a new data point or predicts a value by looking as its closest neighbors
+* **How it works**: When a new, unknown data point arrives, KNN measures the distance (such as Euclidean distance) to the K closest points in the training set. If it is a classification task, whichever label wins the majority vote among those neighbors is assigned to the new point
+* **Real-world example**: Recommendation systems (e.g., "people who bought similar items also bought this") or recognizing handwritten digits.
 ```
 from sklearn import neighbors
 knn = neighbors.KNeighborsClassifier(n_neighbors=5)
