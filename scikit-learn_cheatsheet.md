@@ -200,10 +200,11 @@ print(classification_report(y_test, y_pred))
 #### Confusion Matrix
 * **What it is**: A visual \(N \times N\) grid layout that maps out exactly where your model is getting confused by comparing Actual Labels against Predicted Labels.
 * **How it works**: For a simple binary setup (like checking for a disease), it sorts every prediction into a four-quadrant table:
-|	            | Predicted: NO                                                | Predicted: YES                                             |
-| ----------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| Actual: NO  | True Negative (TN) _(Correctly called healthy)_              | False Positive (FP) (False Alarm: Healthy but called sick) |
-| Actual: YES	| False Negative (FN) (Missed Target: Sick but called healthy) | True Positive (TP) (Correctly called sick)                 |
+
+|	            | Predicted: NO                                                  | Predicted: YES                                               |
+| ----------- | -------------------------------------------------------------- | ------------------------------------------------------------ |
+| Actual: NO  | True Negative (TN) _(Correctly called healthy)_                | False Positive (FP) _(False Alarm: Healthy but called sick)_ |
+| Actual: YES	| False Negative (FN) _(Missed Target: Sick but called healthy)_ | True Positive (TP) _(Correctly called sick)  _               |
 
 ```
 from sklearn.metrics import confusion_matrix
