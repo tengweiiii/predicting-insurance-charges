@@ -47,3 +47,46 @@ This all may seem superfluous to your intended analysis, but there are a few imp
 Secondly, data exploration can **point you in the direction of important trends and analyses you hadn’t considered previously**. These have the potential to add to your intended analyses or to present a complicating factor that you need to take into account.
 
 Thirdly, this pre-analysis can **be your first clue to where you may have dirty data**. This can be the first time you see that outlier, realize there are twice as many categories as there should be, or discover that the data collection method was different last year than it was the year before. These are all critical pieces of information that should encourage you to be curious about your dataset.
+
+## Techniques for Data Cleaning in Python
+### Handling missing values
+Invariably, when you have a large dataset, some fields will be missing in one or more entries. Not only does this mean you are missing valuable data, but the NaN entries can trip up some Python functions, making your model inaccurate.
+
+When you find a missing value, you have a choice to either **eliminate that entry from analysis** or try to **impute a reasonable value to put in its place**. If your dataset is reasonably small, I would suggest viewing the rows that contain missing values so you can determine the best course of action.
+
+```
+import pandas as pd # Identify rows with NaN values
+rows_with_nan = df[df.isnull().any(axis=1)] # View the rows with NaN values
+print(rows_with_nan)
+```
+
+Deleting an entry is typically not the first choice, as it means taking potentially valuable information out of the analysis.
+
+However, **sometimes deletion is the best option**, for example, if the entry doesn’t provide enough other information to warrant keeping it (like if the entry is only a date with no valuable information).
+
+Deletion is also the easiest way to deal with entries that contain missing values. So, if you are short on time and the rest of the entry is not important to the analysis, deleting entries with NaNs is an option.
+
+You can use the **_.dropna()_** method from the Pandas library to drop rows from a DataFrame that contain NaNs.
+
+```
+import pandas as pd # Assuming df is your DataFrame
+df.dropna(inplace=True)
+```
+
+The generally preferred method of handling missing values is imputing a reasonable value. Finding a reasonable value to impute can be an art in its own right, but there are several established methods that can be a good starting point.
+
+The **_.fillna()_** method from Pandas will impute missing values using the mean so as not to change the distribution.
+
+```
+import pandas as pd # Assuming df is your DataFrame
+dr.fillna(df.mean(), inplace=True) # Replace NaN values with the mean of the column
+```
+
+The scikit-learn library has a simple imputation function that works well, too.
+```
+from sklearn.impute import SimpleImputer
+import pandas as pd # Assuming df is your DataFrame
+imputer = SimpleImputer(strategy='mean')
+df_imputed = pd.DataFrame(impute.fit_transform(df), columns=df.columns)
+```
+
