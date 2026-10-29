@@ -129,3 +129,43 @@ from sklearn.cluster import KMeans
 k_means = KMeans(n_clusters=3, random_state=0)
 ```
 ---
+## Model Fitting
+### Supervised Learning
+```
+lr.fit(X, y)
+knn.fit(X_train, y_train)
+svc.fit(X_train, y_train)
+```
+### Unsupervised Learning
+```
+k_means.fit(X_train)
+pca_model = pca.fit_transform(X_train)
+```
+
+| Type	       | Syntax Structure	| What it Means                                                                                                                           |
+| ------------ | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Supervised	 | model.fit(X, y)  |	Requires two arguments: X (the features/input data) and y (the labels/correct target answers). The model learns the direct mapping from X to y. |
+| Unsupervised | model.fit(X)     |	Requires only one argument: X (the input data). There is no y because the model is left on its own to figure out the geometric structure or groupings inherent in X. |
+
+### Special Case: PCA's .fit_transform()
+For dimensionality reduction models like PCA, you often see pca.fit_transform(X). This is a shortcut that does two things at once:
+1. _fit(X)_: Learns the optimal structural angles (principal components) of the data.
+2. _transform(X)_: Immediately applies those angles to compress the original dataset into a smaller footprint.
+---
+## Prediction
+### Supervised Estimators
+```
+y_pred = svc.predict(np.random.random((2, 5)))
+y_pred = lr.predict(X_test)
+y_pred = knn.predict_proba(X_test)
+```
+### Unsupervised Estimators
+```
+y_pred = k_means.predict(X_test)
+```
+
+|Type	        | Method Used	          | What the Output (y_pred) Represents                                                                                                 |
+| ----------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+|Supervised	  | predict(X_test)     	| Predicts an actual target value, like a specific category (e.g., "Spam") or a continuous number (e.g., "$350,000"). |
+|Supervised  	| predict_proba(X_test) |	Output is a list of probabilities (e.g., "There is an 85% chance this email is spam, and a 15% chance it is not"). |
+|Unsupervised	| predict(X_test)	| Assigns the new data to a specific cluster ID (e.g., Cluster 0, Cluster 1, Cluster 2) based on which trained center point it lives closest to. |
