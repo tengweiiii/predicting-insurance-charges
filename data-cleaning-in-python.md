@@ -260,7 +260,8 @@ scaler = StandardScaler()
 standardized_data = scaler.fit_transform(data)
 ```
 The specific characteristics of your data and the requirements of your intended model will dictate how you will scale your data.
-Learn more: https://www.datacamp.com/tutorial/normalization-vs-standardization
+
+Learn more on normalization and standardization: https://www.datacamp.com/tutorial/normalization-vs-standardization
 
 ### Encoding categorical variables
 Encoding categorical variables is an essential preprocessing step in machine learning when **dealing with features that are not numerical**. Categorical variables represent qualitative data, such as types, classes, or labels. To use these variables in machine learning algorithms, they need to be converted into a numerical format.
@@ -320,3 +321,35 @@ print("\nDataFrame with Label Encoded Column:")
 print(df[['ID', 'Color_LabelEncoded']])
 ```
 > It's important to choose the appropriate encoding method based on the nature of the categorical variable and the requirements of the machine learning algorithm. One-hot encoding is generally preferred for nominal variables, while label encoding is suitable for ordinal variables.
+
+### Feature engineering techniques
+Feature engineering is a step in machine learning model development involving the **creation of new features or the modification of existing ones**. This process is common when the _raw data lacks features that directly contribute to the learning task_ or when_ the existing features are not in a form that the learning algorithm can effectively use_.
+
+Consider a scenario where you're working with a dataset of housing prices, and you want to predict the sale price of houses based on various features such as the number of rooms, square footage of the living area, and condition of the property. However, the dataset doesn't include a feature that directly captures the overall condition of the house.
+
+In this case, you can create a new feature by combining existing features or extracting relevant information.
+
+For example, you might create a feature called "Overall Condition" by aggregating the condition ratings of individual components of the house, such as the condition of the kitchen, the quality of the basement, the age of the property, recent renovations, etc.
+
+In cases where the **relationship between features and the target variable is nonlinear**, **polynomial features can be generated** by raising existing features to various powers. This approach helps _capture complex relationships between variables_ that may not be linearly separable.
+```
+from sklearn.preprocessing import PolynomialFeatures
+
+poly = PolynomialFeatures(degree=2)
+polynomial_features = poly.fit_transform(data)
+```
+
+In other cases, you may be dealing with **high-dimensional datasets or multicollinearity among features**. Techniques like **Principal Component Analysis (PCA)** can be employed to _reduce the dimensionality of the dataset_ while retaining most of the relevant information.
+```
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+transformed_features = pca.fit_transform(data)
+```
+
+> Feature engineering ensures that you have the correct data in the correct format for your model to use. There are many techniques in feature engineering, and which you use will be highly dependent on what you are trying to accomplish.
+
+Learn more on feature engineering: https://app.datacamp.com/learn/courses/feature-engineering-for-machine-learning-in-python
+
+## CLeaning Data in Python: Best Practices and Tips
+1. **Store raw data separately**: Always keep the original! This is the number one most important tip when cleaning data. Keep a copy of the raw data files separate from the cleaned and processed versions. This ensures that you always have a reference point and can easily revert to the original data if needed.
