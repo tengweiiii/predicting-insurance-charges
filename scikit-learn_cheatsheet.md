@@ -269,7 +269,7 @@ from sklearn.metrics import v_measure_score
 metrics.v_measure_score(y_true, y_pred)
 ```
 
-## Cross-validation
+### Cross-validation
 #### Cross-validation is a dataset-splitting technique used to evaluate how well a machine learning model will perform on new, unseen data, ensuring that your evaluation metrics aren't just the result of a lucky guess or a biased split.
 ```
 print(cross_val_score(knn, X_train, y_train, cv=4))
@@ -351,3 +351,31 @@ print(cross_val_score(lr, X, y, cv=2))
 * **Uses All Data**: Every single data point gets a turn to be part of the test set exactly once, and part of the training set K-1 times.
 * **Provides a Realistic Benchmark**: The average score gives you an honest, stable look at how robust your model actually is.
 ---
+## Tune Your Model
+### Grid Search
+* **What it is**: A thorough, exhaustive search method that tries every single possible combination of settings from a list you provide.
+* **How it works**: You give the algorithm a grid of options (e.g., for KNN: try K=[1, 3] and try distance metrics=['euclidean', 'cityblock']). Grid Search will meticulously build, train and cross-validate a model for all 4 possible combinations to find the absolute best performer.
+```
+from sklearn.grid_search import GridSearchCV
+params = {"n_neighbors": np.arange(1, 3), "metric": ["euclidean", "cityblock"]}
+grid = GridSearchCV(estimator=knn, param_grid=params)
+grid.fit(X_train, y_train)
+print(grid.best_score)
+print(grid.best_estimator_.n_neighbors)
+```
+
+### Randomized Parameter Optimization
+* **What it is**: A faster, budget-friendly search method that tests a random selection of settings from a wide range or distribution.
+* **How it works**: Instead of checking every single tiny combination, you tell the algorithm: "Here is a massive range of options, pick 10 random combinations to test, and tell me which of those 10 did the best."
+```
+from sklearn.grid_search import RandomizedSearchCV
+params = {"n_neighbors": range(1,5), "weights": ["uniform", "distance"]}
+rsearch = RandomizedSerahcCV(
+           estimator=knn,
+           param_distributions: params,
+           cv=4,
+           n_iter=8,
+           random_state=5)
+rsearch.fit(X_train, y_train)
+print(rsearch.best_score_)
+```
