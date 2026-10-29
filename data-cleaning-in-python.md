@@ -351,7 +351,7 @@ transformed_features = pca.fit_transform(data)
 
 Learn more on feature engineering: https://app.datacamp.com/learn/courses/feature-engineering-for-machine-learning-in-python
 
-## CLeaning Data in Python: Best Practices and Tips
+## Cleaning Data in Python: Best Practices and Tips
 1. **Store raw data separately**: Always keep the original! This is the number one most important tip when cleaning data. Keep a copy of the raw data files separate from the cleaned and processed versions. This ensures that you always have a reference point and can easily revert to the original data if needed.
 2. **Document your data-cleaning code**: Add comments to your code to explain the purpose of each cleaning step and any assumptions made.
 3. **Look out for unintended consequences**: You’ll want to make sure your data cleaning efforts aren’t significantly changing the distribution or introducing any unintended biases. Repeated data exploration after your cleaning efforts can help ensure you are on the right track.
