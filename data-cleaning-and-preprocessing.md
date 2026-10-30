@@ -32,6 +32,12 @@ Total columns: 7 (6 features + 1 target)
 ```
 insurance.info()
 ```
+Pay attention to:
+* Number of entries.
+* Data types (int64, float64, object).
+* Non-null counts.
+* Whether there are missing values.
+  
 Output:
 ```
 <class 'pandas.core.frame.DataFrame'>
@@ -49,7 +55,7 @@ Data columns (total 7 columns):
 dtypes: float64(3), object(4)
 memory usage: 73.3+ KB
 ```
-Observation:
+Output:
 | Item     | Result | Observation |
 |--------- | -------- | -------- |
 | Age | 1,272 non-null	| 66 missing |
@@ -61,6 +67,39 @@ Observation:
 | Charges	| 1,284 non-null	| 54 missing |
 
 > Notice that the first six columns have exactly the same number of non-null values. This might indicate that some records have multiple missing fields.
+
+#### Task C: Generate descriptive statistics
+```
+insurance.describe()
+```
+This gives us:
+* Mean and standard deviation.
+* Minimum and maximum values.
+* 25th, 50th and 75th percentiles.
+  
+Output: 
+| index	| age	| bmi	| children |
+| -------- | --------- | ---------- | ---------- |
+| count	| 1272	| 1272	| 1272 |
+| mean	| 35.2146226415	| 30.5605503145	| 0.9488993711 |
+| std	| 22.4782508402	| 6.0955733842	| 1.3035322282 |
+| min	| -64	| 15.96	| -4 |
+| 25%	| 24.75	| 26.18	| 0 |
+| 50%	| 38	| 30.21	| 1 |
+| 75%	| 51	| 34.485	| 2 |
+| max	| 64	| 53.13 |	5 |
+
+#### Task D: Check categorical values
+```
+insurance.describe(include='object')
+```
+Output: 
+| index	| sex	| smoker	| region	| charges |
+| -------- | -------- | -------- | -------- | -------- |
+| count	| 1272	| 1272	| 1272	| 1284 |
+| unique	| 6	| 2	| 8	| 1272 |
+| top	| male	| no	| Southeast	| $nan |
+| freq	| 517	| 1013	| 172	| 12 |
 
 ### Issues discovered
 #### Issue 1: Missing values - Needs investigation
@@ -77,6 +116,6 @@ The minimum children value is -4. The number of dependents cannot be negative.
 * region has 8 unique values, although only 4 regions are expected.
 
 #### Issue 5: Incorrect data type - Needs conversion
-_charges_ is currently an object instead of a numeric column.
+`charges` is currently an object instead of a numeric column.
 
-Your output also shows $nan as the most frequent value, suggesting that some charges may contain currency symbols or text representations of missing values.
+Your output also shows `$nan` as the most frequent value, suggesting that some charges may contain currency symbols or text representations of missing values.
