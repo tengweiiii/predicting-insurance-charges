@@ -119,3 +119,34 @@ The minimum children value is -4. The number of dependents cannot be negative.
 `charges` is currently an object instead of a numeric column.
 
 Your output also shows `$nan` as the most frequent value, suggesting that some charges may contain currency symbols or text representations of missing values.
+
+## Data Cleaning and Preprocessing
+### Task 1: Investigate missing values
+```
+insurance.isnull().sum()
+```
+Output: 
+| index	| 0 |
+| ----- | ----- |
+| age	| 66 |
+| sex	| 66 |
+| bmi	| 66 |
+| children	| 66 |
+| smoker	| 66 |
+| region	| 66 |
+| charges	| 54 |
+
+### Task 1.1: Calculate the missing percentage
+```
+(insurance.isnull().sum() / len(insurance)) * 100
+```
+Output:
+| index	| 0 |
+| ----- | --------------- |
+| age	| 4.932735426 |
+| sex	| 4.932735426 |
+| bmi	| 4.932735426 |
+| children	| 4.932735426 |
+| smoker	| 4.932735426 |
+| region	| 4.932735426 |
+| charges	| 4.0358744395 |
