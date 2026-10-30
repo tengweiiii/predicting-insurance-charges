@@ -333,3 +333,38 @@ insurance['region'].value_counts(dropna=False)
 | northwest | 149   |
 | Southwest | 148   |
 | Null      | 66    |
+
+### Review: Data quality assessment
+#### Missing values
+All 6 feature columns have exactly 66 missing values. This suggestd that some rows might have been corrupted or partially removed.
+> Suggestion: Do not immediate;y remove every row containing a first value. Investigate whether the missing values occur in the same records.
+
+#### Invalid numerical values
+* **Age**: Negative ages are impossible. These records need correction or removal
+* **Children**: Negatove numbers of children are also impossible
+* **BMI**: No obvious invalid BMI values for the descriptive statistics
+
+One important distinction:
+* Negative age is an invalid value.
+* Negative children is an invalid value.
+* High BMI is not automatically an error.
+  
+> Suggestion: Treat negative ages and children as invalid records rather than converting them into positive values. For example, changing -40 into 40 assumes that the original value was entered with an incorrect sign. We don't have evidence to justify that assumption.
+
+#### Categorical inconsistencies
+* **Sex**: standardize into lowercase male and female
+* **Smoker**: standardize the capitalization
+* **Region**: standardize the capitalization
+> Convert categorical text to lowercase and remove unnecessary spaces before checking the unique values again.
+
+### Recommended cleaning strategy
+| Problem | Recommended treatment |
+|---|---|
+| Missing feature values | Investigate overlap, then consider imputation or row removal |
+| Missing `charges` | Remove records without a target value from training |
+| Negative `age` | Remove invalid records |
+| Negative `children` | Remove invalid records |
+| Sex inconsistencies | Standardize into `male` / `female` |
+| Smoker capitalization | Convert to lowercase |
+| Region capitalization | Convert to lowercase |
+| Charges currency symbols | Remove symbols and convert to numeric |
