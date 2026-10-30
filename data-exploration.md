@@ -1,5 +1,5 @@
 # Data Exploration
-## Step 1: Data loading and exploration
+## Data loading and exploration
 ```
 # Import required libraries
 import pandas as pd
