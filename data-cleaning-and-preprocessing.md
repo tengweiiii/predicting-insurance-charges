@@ -55,7 +55,7 @@ Data columns (total 7 columns):
 dtypes: float64(3), object(4)
 memory usage: 73.3+ KB
 ```
-Output:
+Observation:
 | Item     | Result | Observation |
 |--------- | -------- | -------- |
 | Age | 1,272 non-null	| 66 missing |
