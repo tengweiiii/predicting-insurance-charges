@@ -62,3 +62,21 @@ Observation:
 
 > Notice that the first six columns have exactly the same number of non-null values. This might indicate that some records have multiple missing fields.
 
+### Issues discovered
+#### Issue 1: Missing values - Needs investigation
+There are 66 missing values in each of the 6 feature columns and 54 missing values in charges.
+
+#### Issue 2: Invalid age - Anomaly
+The minimum age is -64. A person's age cannot be negative
+
+#### Issue 3: Invalid children - Anomaly
+The minimum children value is -4. The number of dependents cannot be negative.
+
+#### Issue 4: Categorical inconsistencies - Needs investigation
+* sex has 6 unique values, although only male and female are expected.
+* region has 8 unique values, although only 4 regions are expected.
+
+#### Issue 5: Incorrect data type - Needs conversion
+_charges_ is currently an object instead of a numeric column.
+
+Your output also shows $nan as the most frequent value, suggesting that some charges may contain currency symbols or text representations of missing values.
