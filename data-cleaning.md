@@ -800,7 +800,18 @@ insurance_clean.duplicated().sum()
 ```
 We need to determine whether the records are exact duplicates across all seven columns.
 
+### 2.8.5 Remove Duplicates Records
+#### Remove duplicate rows
+```
+insurance_clean = insurance_clean.drop_duplicates()
+print("Dataset shape:", insurance_clean.shape)
+print("Duplicate rows:", insurance_clean.duplicated().sum())
+```
 Output:
 ```
-1
+Dataset shape: (1167, 7)
+Duplicate rows: 0
 ```
+
+### Interpretation
+During the final data quality verification, one pair of exact duplicate records was identified. Both records contained identical values across all seven columns. Therefore, the `drop_duplicates()` method was applied to remove one duplicate record and prevent the same observation from being counted twice during model training. After removal, the dataset contained 1,167 records with no remaining duplicate rows.
