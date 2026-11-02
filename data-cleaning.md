@@ -411,3 +411,134 @@ Result:
 * Remaining records: 1,168
 * Negative children values remaining: 0
 * Missing children values retained: 29
+
+## 2.6 Standardize Categorical Values
+During our earlier data exploration, we found inconsistent values in the categorical columns. For example, Male, male, M and man represent the same category but are recorded differently. These inconsistencies need to be standardized so the model can interpret the categories correctly.
+### 2.6.1 Sex
+#### Step 1: Inspect current values
+```
+insurance_clean['sex'].value_counts(dropna=False)
+```
+Output: 
+| sex    | count |
+|--------|-------|
+| male   | 469   |
+| female | 451   |
+| M      | 58    |
+| woman  | 55    |
+| man    | 55    |
+| F      | 51    |
+| null   | 29    |
+
+#### Step 2: Inspect unique values
+```
+insurance_clean['sex'].unique()
+```
+Output:
+```
+insurance_clean['sex'].unique()
+array(['female', 'male', 'woman', 'F', 'man', 'M', nan], dtype=object)
+```
+
+### 2.6.2 Standardize the sex column
+```
+sex_mapping = {
+    'male': 'male',
+    'M': 'male',
+    'man': 'male',
+    'female': 'female',
+    'F': 'female',
+    'woman': 'female'
+}
+
+insurance_clean['sex'] = insurance_clean['sex'].map(sex_mapping)
+insurance_clean['sex'].value_counts(dropna=False)
+```
+Output:
+| sex    | count |
+|--------|-------|
+| male   | 582   |
+| female | 557   |
+| null   | 29    |
+
+### 2.6.3 Smoker
+#### Step 1: Check value counts
+```
+insurance_clean['smoker'].value_counts(dropna=False)
+```
+Output: 
+| smoker | count |
+|--------|-------|
+| no     | 904   |
+| yes    | 233   |
+| null   | 31    |
+
+#### Step 2: Check unique values
+```
+insurance_clean['smoker'].unique()
+```
+Output: 
+```
+array(['yes', 'no', nan], dtype=object)
+```
+> The column contains only two valid categories. There are no inconsistent variations such as Yes, YES or No. Therefore, no standardization is required for this column.
+
+### 2.6.4 Region
+#### Step 1: Check value counts
+```
+insurance_clean['region'].value_counts(dropna=False)
+```
+Output:
+| region    | count |
+|-----------|-------|
+| Southeast | 157   |
+| southeast | 147   |
+| Northwest | 144   |
+| southwest | 140   |
+| northwest | 140   |
+| Northeast | 140   |
+| northeast | 137   |
+| Southwest | 132   |
+| null      | 31    |
+
+
+#### Step 2: Check unique values
+```
+insurance_clean['region'].unique()
+```
+Output:
+```
+array(['southwest', 'Southeast', 'southeast', 'northwest', 'Northwest',
+       'Northeast', 'northeast', 'Southwest', nan], dtype=object)
+```
+
+### 2.6.5 Standardize the region column
+```
+insurance_clean['region'] = insurance_clean['region'].str.title()
+insurance_clean['region'].value_counts(dropna=False)
+```
+This converts the first letter of each region to uppercase while keeping the remaining letters lowercase. Missing values will remain unchanged.
+
+Output:
+| region    | count |
+|-----------|-------|
+| Southeast | 304   |
+| Northwest | 284   |
+| Northeast | 277   |
+| Southwest | 272   |
+| null      | 31    |
+
+### Interpretation
+During data exploration, inconsistent categorical values were identified in the sex and region columns. The sex column contained different representations of male and female, while the region column contained inconsistent capitalization for the four regions.
+
+The `.map()` method was used with a mapping dictionary to standardize the sex column into two categories, male and female. Meanwhile, the `.str.title()` method was applied to the region column to ensure consistent capitalization.
+
+The smoker column was also inspected and found to contain only two consistent categories, yes and no. Therefore, no changes were required.
+
+Missing values in all three columns were preserved for further handling during the missing value treatment stage.
+
+Result:
+* **sex**: 582 male, 557 female, 29 missing values.
+* **smoker**: 904 no, 233 yes, 31 missing values.
+* **region**: 304 Southeast, 284 Northwest, 277 Northeast, 272 Southwest, 31 missing values.
+All categorical values are now consistently represented, making the dataset more suitable for further preprocessing and regression modelling.
