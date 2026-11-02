@@ -586,3 +586,10 @@ Based on the first 20 records and the unique values, we can identify two main in
 2. **Object data type**: The column has the object data type because the values are stored as strings rather than numeric values. This prevents us from directly performing numerical calculations or using the column as a regression target.
 3. **Potential missing values**: Previous investigations also found $nan values. These represent missing or invalid charge values and should be converted to actual NaN values.
 > The charges column requires cleaning before modelling. We need to remove the $ symbol and convert the values into a numeric data type. Invalid or missing values should become NaN so that we can handle them properly.
+
+### Important recommendation
+Keep your original insurance.csv unchanged. Create a cleaned working DataFrame and perform your cleaning operations on that copy.
+```
+insurance_clean = insurance.copy()
+```
+This allows you to preserve the original dataset and compare it with the cleaned version.
