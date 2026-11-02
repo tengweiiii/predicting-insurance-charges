@@ -105,5 +105,36 @@ insurance_clean['charges'].isnull().sum()
 ```
 Output:
 ```
-666
+66
 ```
+
+#### Step 2: Remove rows with missing charges
+Use `dropna()` with `subset=['charges']` so that only rows with missing target values are removed.
+```
+insurance_clean = insurance_clean.dropna(subset=['charges'])
+print("Dataset shape:", insurance_clean.shape)
+print("Missing charges:", insurance_clean['charges'].isnull().sum())
+```
+* `dropna()` removes rows containing missing values.
+* `subset=['charges']` restricts the removal to rows where charges is missing.
+* Other columns may still contain missing values. We will handle those separately.
+
+Output:
+```
+Dataset shape: (1272, 7)
+Missing charges: 0
+```
+
+#### Interpretation:
+
+After converting the `charges` column into numeric format, 66 missing values were identified. Since `charges` is the target variable for the regression model, records without a valid target value cannot be used for supervised model training.
+
+Therefore, rows with missing `charges` were removed using `dropna()` with the `charges` column specified as the subset.
+
+**Result:**
+* Original dataset: 1,338 rows
+* Rows removed: 66
+* Remaining dataset: 1,272 rows
+* Missing values in `charges`: 0
+
+Missing values in the other feature columns were retained for further cleaning and will be handled separately.
