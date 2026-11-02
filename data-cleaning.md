@@ -663,3 +663,144 @@ Not yet. Since we will evaluate our regression model using training and testing 
 Otherwise, information from the testing data could influence the training process. This is known as data leakage.
 
 Later, we will use Scikit-learn's `SimpleImputer` to handle missing values as part of our model preprocessing pipeline.
+
+## 2.8 Final Data Quality Verification
+### 2.8.1 Check Dataset Structure
+#### Step 1: Check the dataset shape
+```
+print("Dataset shape:", insurance_clean.shape)
+```
+This tells us how many records and columns remain after cleaning.
+
+Output:
+```
+Dataset shape: (1168, 7)
+```
+
+#### Step 2: Check data types and non-null counts
+```
+insurance_clean.info()
+```
+This helps us verify that:
+* age, bmi, children and charges have numerical data types.
+* sex, smoker and region have appropriate categorical data types.
+* charges contains no missing values.
+
+Output:
+```
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 1168 entries, 0 to 1337
+Data columns (total 7 columns):
+ #   Column    Non-Null Count  Dtype  
+---  ------    --------------  -----  
+ 0   age       1131 non-null   float64
+ 1   sex       1139 non-null   object 
+ 2   bmi       1131 non-null   float64
+ 3   children  1139 non-null   float64
+ 4   smoker    1137 non-null   object 
+ 5   region    1137 non-null   object 
+ 6   charges   1168 non-null   float64
+dtypes: float64(4), object(3)
+memory usage: 73.0+ KB
+```
+
+### 2.8.2 Verify Remaining Invalid Values
+#### Step 1: Check negative values
+```
+print("Negative ages:", (insurance_clean['age'] < 0).sum())
+print("Negative children:", (insurance_clean['children'] < 0).sum())
+```
+Output:
+```
+Negative ages: 0
+Negative children: 0
+```
+
+#### Step 2: Check categorical values
+```
+for column in ['sex', 'smoker', 'region']:
+    print(f"\n{column.upper()}")
+    print(insurance_clean[column].value_counts(dropna=False))
+```
+Output:
+```
+SEX
+male      582
+female    557
+NaN        29
+Name: sex, dtype: int64
+
+SMOKER
+no     904
+yes    233
+NaN     31
+Name: smoker, dtype: int64
+
+REGION
+Southeast    304
+Northwest    284
+Northeast    277
+Southwest    272
+NaN           31
+Name: region, dtype: int64
+```
+
+### 2.8.3 Final Dataset Summary
+```
+print("Final dataset shape:", insurance_clean.shape)
+
+print("\nTotal missing values:")
+print(insurance_clean.isnull().sum().sum())
+
+print("\nDuplicate rows:")
+print(insurance_clean.duplicated().sum())
+
+print("\nData types:")
+print(insurance_clean.dtypes)
+```
+Output:
+```
+Final dataset shape: (1168, 7)
+
+Total missing values:
+194
+
+Duplicate rows:
+1
+
+Data types:
+age         float64
+sex          object
+bmi         float64
+children    float64
+smoker       object
+region       object
+charges     float64
+dtype: object
+```
+
+### 2.8.4 Investigate Duplicate Records
+#### Step 1: Display duplicate records
+```
+insurance_clean[insurance_clean.duplicated(keep=False)]
+```
+The `keep=False` argument displays all records involved in duplication, rather than showing only the later occurrence.
+
+Output:
+```
+| index | age | sex  | bmi   | children | smoker | region    | charges   |
+|-------|-----|------|-------|----------|--------|-----------|-----------|
+| 195   | 19  | male | 30.59 | 0        | no     | Northwest | 1639.5631 |
+| 581   | 19  | male | 30.59 | 0        | no     | Northwest | 1639.5631 |
+```
+
+#### Step 2: Check the duplicate count
+```
+insurance_clean.duplicated().sum()
+```
+We need to determine whether the records are exact duplicates across all seven columns.
+
+Output:
+```
+1
+```
