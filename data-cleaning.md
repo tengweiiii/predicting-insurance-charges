@@ -303,3 +303,111 @@ Records with negative ages were removed from the working dataset to prevent inva
 * Negative age values remaining: 0
 
 Records with missing age values were retained for subsequent imputation rather than removed during invalid-value filtering.
+
+## 2.5 Handle Invalid Values in children
+During our earlier data exploration, we found that the children column contains negative values. Since the number of children cannot be negative, these values are invalid and need further investigation.
+### 2.5.1 Identify Negative Children Values
+#### Step 1: Count negative values
+```
+(insurance_clean['children'] < 0).sum()
+```
+Output:
+```
+41
+```
+
+#### Step 2: Inspect affected records
+```
+insurance_clean[insurance_clean['children'] < 0]
+```
+Output: 
+| index | age | sex    | bmi    | children | smoker | region    | charges      |
+|-------|-----|--------|--------|----------|--------|-----------|--------------|
+| 34    | 28  | male   | 36.4   | -1       | yes    | Southwest | 51194.55914  |
+| 66    | 61  | F      | 39.1   | -2       | no     | southwest | 14235.072    |
+| 84    | 37  | female | 34.8   | -2       | yes    | Southwest | 39836.519    |
+| 105   | 20  | male   | 28.025 | -1       | yes    | Northwest | 17560.37975  |
+| 129   | 38  | male   | 34.7   | -2       | no     | southwest | 6082.405     |
+| 185   | 36  | male   | 41.895 | -3       | yes    | Northeast | 43753.33705  |
+| 225   | 55  | male   | 33.88  | -3       | no     | southeast | 11987.1682   |
+| 243   | 40  | male   | 35.3   | -3       | no     | southwest | 7196.867     |
+| 267   | 59  | F      | 32.395 | -3       | no     | northeast | 14590.63205  |
+| 279   | 51  | female | 21.56  | -1       | no     | Southeast | 9855.1314    |
+| 297   | 47  | M      | 25.41  | -1       | yes    | Southeast | 21978.6769   |
+| 398   | 64  | male   | 25.6   | -2       | no     | southwest | 14988.432    |
+| 431   | 29  | female | 20.235 | -2       | no     | northwest | 4906.40965   |
+| 571   | 18  | female | 37.29  | -1       | no     | Southeast | 2219.4451    |
+| 578   | 52  | M      | 30.2   | -1       | no     | southwest | 9724.53      |
+| 583   | 32  | F      | 23.65  | -1       | no     | southeast | 17626.23951  |
+| 621   | 37  | man    | 34.1   | -4       | yes    | Southwest | 40182.246    |
+| 645   | 48  | male   | 30.78  | -3       | no     | northeast | 10141.1362   |
+| 653   | 45  | female | 36.3   | -2       | no     | southeast | 8527.532     |
+| 662   | 32  | female | 31.54  | -1       | no     | Northeast | 5148.5526    |
+| 667   | 40  | female | 32.775 | -2       | yes    | Northwest | 40003.33225  |
+| 669   | 40  | female | 29.81  | -1       | no     | southeast | 6500.2359    |
+| 811   | 33  | female | 42.94  | -3       | no     | northwest | 6360.9936    |
+| 853   | 53  | female | 23.75  | -2       | no     | northeast | 11729.6795   |
+| 938   | 18  | male   | 26.18  | -2       | no     | southeast | 2304.0022    |
+| 941   | 50  | F      | 46.09  | -1       | no     | Southeast | 9549.5651    |
+| 962   | 63  | female | 35.2   | -1       | no     | southeast | 14474.675    |
+| 968   | 21  | male   | 25.745 | -2       | no     | northeast | 3279.86855   |
+| 994   | 27  | female | 20.045 | -3       | yes    | Northwest | 16420.49455  |
+| 1005  | 29  | male   | 31.73  | -2       | no     | northwest | 4433.3877    |
+| 1009  | 51  | man    | 27.74  | -1       | no     | northeast | 9957.7216    |
+| 1017  | 26  | female | 34.2   | -2       | no     | southwest | 3987.926     |
+| 1021  | 22  | female | 31.02  | -3       | yes    | southeast | 35595.5898   |
+| 1079  | 63  | male   | 33.66  | -3       | no     | Southeast | 15161.5344   |
+| 1083  | 32  | male   | 31.5   | -1       | no     | Southwest | 4076.497     |
+| 1094  | 50  | female | 33.7   | -4       | no     | southwest | 11299.343    |
+| 1095  | 18  | woman  | 31.35  | -4       | no     | Northeast | 4561.1885    |
+| 1128  | 34  | male   | 32.8   | -1       | no     | southwest | 14358.36437  |
+| 1191  | 41  | woman  | 21.755 | -1       | no     | northeast | 13725.47184  |
+| 1224  | 41  | male   | 23.94  | -1       | no     | Northeast | 6858.4796    |
+| 1299  | 19  | female | 25.745 | -1       | no     | northwest | 2710.82855   |
+
+#### Step 3: Check the distribution of negative values
+```
+insurance_clean.loc[insurance_clean['children'] < 0, 'children'].value_counts().sort_index()
+```
+Output:
+| children | count |
+|----------|-------|
+| -4       | 3     |
+| -3       | 9     |
+| -2       | 12    |
+| -1       | 17    |
+
+From the affected records, we can observe:
+1. Negative values range from -1 to -4.
+2. The affected records contain a mixture of ages, genders, smoking statuses and regions.
+3. There is no obvious pattern indicating that the negative values should simply be converted into positive values.
+4. The actual number of children cannot be determined from the other columns.
+
+### 2.5.2 Remove Records with Negative Children Values
+We should not convert -1 to 1, for example, because we have no evidence that the negative sign is simply a data-entry mistake.
+```
+insurance_clean = insurance_clean[(insurance_clean['children'] >= 0) |(insurance_clean['children'].isnull())]
+print("Dataset shape:", insurance_clean.shape)
+print("Negative children values:", (insurance_clean['children'] < 0).sum())
+print("Missing children values:", insurance_clean['children'].isnull().sum())
+```
+Output: 
+```
+Dataset shape: (1168, 7)
+Negative children values: 0
+Missing children values: 29
+```
+
+### Interpretation
+During data exploration, 41 records containing negative values in the `children` column were identified. The invalid values ranged from -1 to -4.
+
+The affected records contained a mixture of ages, genders, smoking statuses and regions. However, there was no clear pattern to determine the actual number of children. Therefore, these values were treated as invalid rather than converted into positive values.
+
+Records with negative `children` values were removed from the working dataset to prevent invalid information from affecting the regression model. Missing values were retained for further handling during the missing value treatment stage.
+
+Result:
+* Records before removal: 1,209
+* Records removed: 41
+* Remaining records: 1,168
+* Negative children values remaining: 0
+* Missing children values retained: 29
