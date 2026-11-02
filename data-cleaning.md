@@ -270,6 +270,7 @@ Output:
 | -20  | 1     |
 | -19  | 2     |
 | -18  | 3     |
+
 The negative ages range from -18 to -64.
 These values are not realistic because a person's age cannot be negative. Interestingly, their absolute values fall within a typical adult age range, but we cannot assume that the negative sign is simply a data-entry mistake that should be reversed.
 
