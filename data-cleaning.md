@@ -277,7 +277,7 @@ These values are not realistic because a person's age cannot be negative. Intere
 ### 2.4.2 Remove the records with negative ages
 We don't have enough information to confirm that -31 actually means 31. Converting them automatically could introduce incorrect information into our training dataset.
 ```
-insurance_clean = insurance_clean[insurance_clean['age'] >= 0]
+insurance_clean = insurance_clean[(insurance_clean['age'] >= 0) | (insurance_clean['age'].isnull())]
 print("Dataset shape:", insurance_clean.shape)
 print("Negative ages remaining:", (insurance_clean['age'] < 0).sum())
 ```
@@ -301,3 +301,5 @@ Records with negative ages were removed from the working dataset to prevent inva
 * Records removed: 63
 * Remaining records: 1,209
 * Negative age values remaining: 0
+
+Records with missing age values were retained for subsequent imputation rather than removed during invalid-value filtering.
