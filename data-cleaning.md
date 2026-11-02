@@ -542,3 +542,124 @@ Result:
 * **smoker**: 904 no, 233 yes, 31 missing values.
 * **region**: 304 Southeast, 284 Northwest, 277 Northeast, 272 Southwest, 31 missing values.
 All categorical values are now consistently represented, making the dataset more suitable for further preprocessing and regression modelling.
+
+## 2.7 Handle Missing Feature Values
+So far, we have removed records with missing charges because charges is our target variable. However, we have retained missing values in the feature columns because we may still be able to use those records for model training.
+
+Next step is to understand how many missing values remain and decide how to handle them.
+
+### 2.7.1 Identify Missing Values
+#### Step 1: Check missing value counts
+```
+insurance_clean.isnull().sum()
+```
+This shows the number of missing values in each column.
+
+Output:
+| column   | missing values |
+|----------|----------------|
+| age      | 37             |
+| sex      | 29             |
+| bmi      | 37             |
+| children | 29             |
+| smoker   | 31             |
+| region   | 31             |
+| charges  | 0              |
+
+#### Step 2: Calculate missing value percentages
+```
+insurance_clean.isnull().sum() / len(insurance_clean) * 100
+```
+This helps us understand the proportion of missing values in each column.
+
+Output: 
+| column   | missing percentage |
+|----------|--------------------|
+| age      | 3.1678%            |
+| sex      | 2.4829%            |
+| bmi      | 3.1678%            |
+| children | 2.4829%            |
+| smoker   | 2.6541%            |
+| region   | 2.6541%            |
+| charges  | 0%                 |
+
+> Since the missing percentages are relatively low, we can consider imputation instead of removing more records. However, we should not automatically fill every missing value with the mean or mode. We need to choose a suitable method for each column.
+
+### 2.7.2 Determine the Appropriate Imputation Method
+Before filling the missing values, let's inspect the distribution of each feature to decide which imputation method is appropriate.
+
+#### Step 1: Inspect numerical columns
+```
+insurance_clean[['age', 'bmi', 'children']].describe()
+```
+We'll use the results to decide whether to use the mean or median.
+| Column     | Possible treatment | Reason                                      |
+|------------|--------------------|---------------------------------------------|
+| `age`      | Median             | Less affected by extreme values             |
+| `bmi`      | Median             | More robust if the distribution is skewed    |
+| `children` | Median             | Preserves a typical whole-number value       |
+
+Output:
+| Statistic | age          | bmi          | children |
+|-----------|--------------|--------------|----------|
+| count     | 1131         | 1131         | 1139     |
+| mean      | 39.2687886826 | 30.5860831123 | 1.0570676032 |
+| std       | 14.1764571207 | 6.1360131401  | 1.1928649205 |
+| min       | 18           | 15.96        | 0        |
+| 25%       | 26           | 26.22        | 0        |
+| 50%       | 39           | 30.21        | 1        |
+| 75%       | 51.5         | 34.6375      | 2        |
+| max       | 64           | 53.13        | 5        |
+
+Step 2: Inspect categorical columns
+```
+for column in ['sex', 'smoker', 'region']:
+    print(f"\n{column.upper()}")
+    print(insurance_clean[column].value_counts())
+```
+We'll use the mode (most frequent category) as a possible treatment for missing categorical values.
+
+Output:
+```
+SEX
+male      582
+female    557
+Name: sex, dtype: int64
+
+SMOKER
+no     904
+yes    233
+Name: smoker, dtype: int64
+
+REGION
+Southeast    304
+Northwest    284
+Northeast    277
+Southwest    272
+Name: region, dtype: int64
+```
+
+### 2.7.3 Selected Imputation Methods
+Based on the findings, we will use the following methods:
+| Column     | Data type  | Imputation method | Replacement value |
+|------------|------------|-------------------|-------------------|
+| `age`      | Numerical  | Median            | 39                |
+| `bmi`      | Numerical  | Median            | 30.21             |
+| `children` | Numerical  | Median            | 1                 |
+| `sex`      | Categorical | Mode             | male              |
+| `smoker`   | Categorical | Mode             | no                |
+| `region`   | Categorical | Mode             | Southeast         |
+
+### Interpretation
+The dataset contains missing values across all six feature columns, with missing percentages ranging from approximately 2.48% to 3.17%.
+
+For numerical columns (age, bmi and children), median imputation was selected because the median is less sensitive to extreme values. For categorical columns (sex, smoker and region), mode imputation was selected to replace missing values with the most frequently occurring category.
+
+The missing values will be handled during model preprocessing using statistics calculated from the training data only to prevent data leakage.
+
+#### Important: Should we fill the missing values now?
+Not yet. Since we will evaluate our regression model using training and testing data, we should calculate imputation values using the training data only.
+
+Otherwise, information from the testing data could influence the training process. This is known as data leakage.
+
+Later, we will use Scikit-learn's `SimpleImputer` to handle missing values as part of our model preprocessing pipeline.
