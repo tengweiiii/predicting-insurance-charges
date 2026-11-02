@@ -96,3 +96,14 @@ float64
 **Key finding**: The mean is higher than the median, suggesting that the distribution of insurance charges is right-skewed. Some individuals have substantially higher charges than others.
 
 The minimum charge is positive, and the maximum is plausible for an insurance dataset. There are no obvious problems in these summary statistics, although we should investigate unusual values further if needed.
+
+### 2.3.2 Remove Rows with Missing Charges
+Since `charges` is our **target variable**, we need to remove records where the charge amount is missing. A regression model cannot learn from a training record without a known target value.
+#### Step 1: Check the number of missing values
+```
+insurance_clean['charges'].isnull().sum()
+```
+Output:
+```
+666
+```
