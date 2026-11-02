@@ -5,6 +5,7 @@ In supervised machine learning, the dataset is divided into two parts:
 * **Features (X)**: Input variables used by the model to make predictions.
 * **Target (y)**: The output variable that the model is trained to predict.
 For this project:
+
 | Type        | Columns                                      |
 |-------------|----------------------------------------------|
 | Features (X) | age, sex, bmi, children, smoker, region      |
