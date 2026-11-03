@@ -224,6 +224,76 @@ We will use `ColumnTransformer` to apply the appropriate preprocessing steps to 
 | `num`       | age, bmi, children   | Median imputation + StandardScaler |
 | `cat`       | sex, smoker, region  | Mode imputation + OneHotEncoder    |
 
+> We are defining the preprocessing structure, not fitting it yet. It will learn the imputation values, scaling parameters and encoding categories from the training data when we fit the complete model pipeline.
+
+### 3.3.3 Apply Preprocessing to the Training and Testing Data
+We must:
+* **Fit and transform** the training data. This allows the preprocessor to learn the median values, scaling parameters and categorical categories from the training set.
+* **Transform only** the testing data. This applies the same learned transformations without learning anything new from the testing set.
+This prevents data leakage.
 The `ColumnTransformer` combines the processed numerical and categorical features into one dataset that can be used by a regression model.
 
-> We are defining the preprocessing structure, not fitting it yet. It will learn the imputation values, scaling parameters and encoding categories from the training data when we fit the complete model pipeline.
+#### Step 1: Fit and transform the training data
+```
+X_train_processed = preprocessor.fit_transform(X_train)
+print("Processed training shape:", X_train_processed.shape)
+```
+Output:
+```
+Processed training shape: (933, 11)
+```
+
+#### Step 2: Transform the testing data
+```
+X_test_processed = preprocessor.transform(X_test)
+print("Processed testing shape:", X_test_processed.shape)
+```
+Output:
+```
+Processed testing shape: (234, 11)
+```
+
+#### Why did the number of columns increase from 6 to 11?
+One-Hot Encoding converted the three categorical features into binary columns:
+| Feature            | Encoded columns |
+|--------------------|-----------------|
+| sex                | 2               |
+| smoker             | 2               |
+| region             | 4               |
+| Numerical features | 3               |
+| **Total**          | **11**          |
+
+The original six features have now become 11 numerical features.
+
+Most importantly:
+* Missing values have been imputed.
+* Numerical features have been standardized.
+* Categorical features have been encoded.
+* Both datasets have the same 11 columns.
+* The testing data used the preprocessing parameters learned from the training data.
+
+### Interpretation
+The preprocessing pipeline was fitted and applied to the training dataset, while the testing dataset was transformed using the same learned parameters. After preprocessing, the training dataset contained 933 records and 11 features, while the testing dataset contained 234 records and 11 features. The number of features increased from 6 to 11 because One-Hot Encoding converted the categorical variables into multiple numerical columns. Both datasets now have the same feature structure and are ready for regression modelling.
+
+### 3.3.4 Verify the Processed Data
+#### Step 1: Check for missing values
+```
+import numpy as np
+
+print("Training missing values:", np.isnan(X_train_processed).sum())
+print("Testing missing values:", np.isnan(X_test_processed).sum())
+```
+Output: 
+```
+Training missing values: 0
+Testing missing values: 0
+```
+This confirms that:
+* Missing numerical values were successfully replaced using median imputation.
+* Missing categorical values were successfully replaced using mode imputation.
+* Numerical features were standardized.
+* Categorical features were converted using One-Hot Encoding.
+* The same preprocessing parameters were applied to both datasets.
+
+### Interpretation
+After applying the preprocessing pipelines, both training and testing datasets were successfully transformed into numerical formats with 11 features. All missing values were handled through imputation, and no missing values remained. The training dataset was used to fit the preprocessor, while the testing dataset was transformed using the learned parameters to prevent data leakage.
