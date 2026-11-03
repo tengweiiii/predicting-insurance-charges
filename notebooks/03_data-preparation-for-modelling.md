@@ -33,7 +33,8 @@ Feature columns:
 * X contains 1,167 records and 6 input features.
 * y contains 1,167 target values.
 * The `charges` column has been successfully separated from the input features.
-> Why is this important? \nThe model learns from the six customer-related features in X and uses the actual insurance charges in y to learn how to make predictions.
+> Why is this important?
+> The model learns from the six customer-related features in X and uses the actual insurance charges in y to learn how to make predictions.
 
 ## 3.2 Split Training and Testing Data
 Before training the model, we need to split the dataset into training and testing sets.
@@ -135,6 +136,9 @@ dtype: int64
 * **Most frequent imputation**: Replaces missing categorical values with the most common category.
 > We will calculate the replacement values using the training set only. The testing set must not influence the imputation process.
 
+#### Interpretation
+The missing value inspection showed that all six feature columns contained missing values in both the training and testing datasets. The numerical features (`age`, `bmi` and `children`) were selected for median imputation because the median is less affected by extreme values. Meanwhile, the categorical features (`sex`, `smoker` and `region`) were selected for most frequent value imputation to replace missing values with their most common categories. These treatments were planned to ensure that the missing values could be handled without removing additional records.
+
 ### 3.3.2 Create Preprocessing Pipelines
 We will use Scikit-learn's `SimpleImputer`, `StandardScaler`, `OneHotEncoder`, and `ColumnTransformer`.
 ```
@@ -213,7 +217,8 @@ We will perform two preprocessing steps:
 | 1    | `SimpleImputer(strategy='most_frequent')`  | Replaces missing values with the most common category    |
 | 2    | `OneHotEncoder(handle_unknown='ignore')`   | Converts categories into numerical binary columns       |
 
-> **Why use handle_unknown='ignore'?** \nThe testing dataset might contain a category that was not present in the training dataset. This setting prevents the encoder from raising an error when it encounters an unfamiliar category.
+> **Why use handle_unknown='ignore'?**
+> The testing dataset might contain a category that was not present in the training dataset. This setting prevents the encoder from raising an error when it encounters an unfamiliar category.
 
 #### Step 4: Combine both preprocessing pipelines
 We will use `ColumnTransformer` to apply the appropriate preprocessing steps to each group of features.
@@ -225,6 +230,9 @@ We will use `ColumnTransformer` to apply the appropriate preprocessing steps to 
 | `cat`       | sex, smoker, region  | Mode imputation + OneHotEncoder    |
 
 > We are defining the preprocessing structure, not fitting it yet. It will learn the imputation values, scaling parameters and encoding categories from the training data when we fit the complete model pipeline.
+
+#### Interpretation
+Scikit-learn preprocessing pipelines were created to handle numerical and categorical features separately. The numerical pipeline applies median imputation followed by standardization, while the categorical pipeline applies most frequent value imputation followed by One-Hot Encoding. A ColumnTransformer was then used to combine both pipelines into a single preprocessing structure. These pipelines were defined without fitting them at this stage. The preprocessing parameters would be learned later using the training dataset.
 
 ### 3.3.3 Apply Preprocessing to the Training and Testing Data
 We must:
