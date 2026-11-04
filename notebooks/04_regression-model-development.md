@@ -156,7 +156,7 @@ Output:
 ### Interpretation
 The Linear Regression model achieved an R² score of 0.7621, indicating that it explains approximately 76.21% of the variation in insurance charges. The model recorded an MAE of RM4,037.32 and an RMSE of RM5,693.12. The higher RMSE compared to MAE suggests that some predictions have relatively larger errors. Overall, the model meets the project's minimum R² requirement of 0.65 and provides a baseline for comparison with other regression models.
 
-## 4.3 Evakuate Model Generalization Using Cross-Validation
+## 4.3 Evaluate Model Generalization Using Cross-Validation
 Before moving to more advanced models, let's check whether the Linear Regression model performs consistently across different subsets of the training data.
 
 We will use **5-Fold Cross-Validation**.
