@@ -233,3 +233,168 @@ The testing score is approximately 0.0570 higher than the cross-validation avera
 
 **One important technical improvement before we continue**: 
 Our earlier cross-validation used data that had already been preprocessed using the full training set. This means preprocessing information was shared across folds. For a more reliable cross-validation result, we should eventually put the preprocessor and Linear Regression model into one Pipeline and repeat the evaluation.
+
+## 4.4 Prepare the Validation Dataset
+The validation dataset contains unseen records that we will use to generate insurance charge predictions.
+
+First, load and inspect the dataset to understand its structure, columns, data types, and missing values.
+```
+# Step 1: Load the validation dataset
+validation_data = pd.read_csv('validation_dataset.csv')
+
+# Step 2: Check the dataset information
+print("Validation dataset shape:", validation_data.shape)
+
+print("\nDataset information:")
+validation_data.info()
+
+print("\nFirst 5 rows:")
+display(validation_data.head())
+
+print("\nMissing values:")
+print(validation_data.isnull().sum())
+```
+Output:
+```
+Validation dataset shape: (50, 6)
+
+Dataset information:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 50 entries, 0 to 49
+Data columns (total 6 columns):
+ #   Column    Non-Null Count  Dtype  
+---  ------    --------------  -----  
+ 0   age       50 non-null     float64
+ 1   sex       50 non-null     object 
+ 2   bmi       50 non-null     float64
+ 3   children  50 non-null     float64
+ 4   smoker    50 non-null     object 
+ 5   region    50 non-null     object 
+dtypes: float64(3), object(3)
+memory usage: 2.5+ KB
+
+First 5 rows:
+```
+| index | age | sex    | bmi           | children | smoker | region    |
+|-------|-----|--------|---------------|----------|--------|-----------|
+| 0     | 18  | female | 24.09         | 1        | no     | southeast |
+| 1     | 39  | male   | 26.41         | 0        | yes    | northeast |
+| 2     | 27  | male   | 29.15         | 0        | yes    | southeast |
+| 3     | 71  | male   | 65.5021352956 | 13       | yes    | southeast |
+| 4     | 28  | male   | 38.06         | 0        | no     | southeast |
+
+```
+Missing values:
+age         0
+sex         0
+bmi         0
+children    0
+smoker      0
+region      0
+dtype: int64
+```
+> The validation dataset contains 50 records and 6 expected features, with no missing values. This means we can proceed directly to applying the existing preprocessing pipeline.
+
+## 4.5 Prepare Validation Features
+```
+# Step 1: Standardize categorical values
+validation_data['sex'] = validation_data['sex'].map(sex_mapping)
+validation_data['region'] = validation_data['region'].str.title()
+
+# Step 2: Select the features
+X_validation = validation_data[X.columns]
+
+# Step 3: Apply the fitted preprocessing pipeline
+X_validation_processed = preprocessor.transform(X_validation)
+
+# Step 4: Check the processed dataset
+print("Processed validation shape:", X_validation_processed.shape)
+print("Missing values:", np.isnan(X_validation_processed).sum())
+```
+Output:
+```
+Processed validation shape: (50, 11)
+Missing values: 0
+```
+> This confirms that the validation data has the same 11 processed features as the training data.
+
+## 4.6 Generate Predictions Using the Trained Model
+Now, use the trained Linear Regression model to predict insurance charges for all 50 unseen records.
+```
+# Step 1: Generate predictions
+validation_predictions = np.maximum(validation_predictions, 1000) # apply the minimum charge (1000)
+
+# Step 2: Display the first 10 predictions
+print("First 10 predicted charges:")
+print(validation_predictions[:10])
+
+# Step 3: Check the prediction count
+print("Number of predictions:", len(validation_predictions))
+```
+Output:
+```
+First 10 predicted charges:
+[ 1000.         30820.51032702 28179.54002057 56321.37996777
+  7627.55011852 58055.66865207  7148.36504225 13237.43929402
+ 13091.30392293 16344.11377455]
+Number of predictions: 50
+```
+
+### Interpretation
+The predictions now meet the minimum charge requirement:
+* Number of predictions: 50
+* Minimum predicted charge: RM1,000
+* First prediction: RM1,000 (adjusted from RM588.73)
+
+## 4.7 Store Predictions in the Validation Dataset
+The final step is to add the predictions as a new column named `predicted_charges`.
+```
+# Step 1: Create the new column
+validation_data['predicted_charges'] = validation_predictions
+
+# Step 2: Display the results
+display(validation_data.head(10))
+```
+Output: 
+| index | age | sex    | bmi           | children | smoker | region    | predicted_charges    |
+|-------|-----|--------|---------------|----------|--------|-----------|----------------------|
+| 0     | 18  | female | 24.09         | 1        | no     | Southeast | 1000                 |
+| 1     | 39  | male   | 26.41         | 0        | yes    | Northeast | 30820.5103270169      |
+| 2     | 27  | male   | 29.15         | 0        | yes    | Southeast | 28179.5400205701      |
+| 3     | 71  | male   | 65.5021352956 | 13       | yes    | Southeast | 56321.3799677732      |
+| 4     | 28  | male   | 38.06         | 0        | no     | Southeast | 7627.5501185168       |
+| 5     | 70  | female | 72.9583505593 | 11       | yes    | Southeast | 58055.6686520704      |
+| 6     | 29  | female | 32.11         | 2        | no     | Northwest | 7148.3650422498       |
+| 7     | 42  | female | 41.325        | 1        | no     | Northeast | 13237.439294016       |
+| 8     | 48  | female | 36.575        | 0        | no     | Northwest | 13091.3039229336      |
+| 9     | 63  | male   | 33.66         | 3        | no     | Southeast | 16344.1137745536      |
+
+## Final Project Verification
+```
+print("Final dataset shape:", validation_data.shape)
+print("\nColumn names:")
+print(validation_data.columns.tolist())
+
+print("\nMinimum predicted charge:", validation_data['predicted_charges'].min())
+print("Missing predictions:", validation_data['predicted_charges'].isnull().sum())
+print("Number of predictions:", len(validation_data))
+print("R-squared score:", r2_value)
+```
+Output:
+```
+Final dataset shape: (50, 7)
+
+Column names:
+['age', 'sex', 'bmi', 'children', 'smoker', 'region', 'predicted_charges']
+
+Minimum predicted charge: 1000.0
+Missing predictions: 0
+Number of predictions: 50
+R-squared score: 0.7621317165889079
+```
+
+### Save your final predictions
+```
+validation_data.to_csv('insurance_predictions.csv', index=False)
+```
+This saves all 50 predicted insurance charges into `insurance_predictions.csv`.
